@@ -35,8 +35,5 @@ cc_library {
         "-Werror",
         "-O3",
     ],
-    lto: {
-        thin: true,
-    },
     export_include_dirs: ["."],
 }
