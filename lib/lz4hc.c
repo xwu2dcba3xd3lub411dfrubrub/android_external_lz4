@@ -201,7 +201,7 @@ LZ4HC_countPattern(const BYTE* ip, const BYTE* const iEnd, U32 const pattern32)
 
 /* LZ4HC_reverseCountPattern() :
  * pattern must be a sample of repetitive pattern of length 1, 2 or 4 (but not 3!)
- * read using natural platform endianess */
+ * read using natural platform endianness */
 static unsigned
 LZ4HC_reverseCountPattern(const BYTE* ip, const BYTE* const iLow, U32 pattern)
 {
@@ -211,7 +211,7 @@ LZ4HC_reverseCountPattern(const BYTE* ip, const BYTE* const iLow, U32 pattern)
         if (LZ4_read32(ip-4) != pattern) break;
         ip -= 4;
     }
-    {   const BYTE* bytePtr = (const BYTE*)(&pattern) + 3; /* works for any endianess */
+    {   const BYTE* bytePtr = (const BYTE*)(&pattern) + 3; /* works for any endianness */
         while (likely(ip>iLow)) {
             if (ip[-1] != *bytePtr) break;
             ip--; bytePtr--;
@@ -1331,7 +1331,7 @@ static int LZ4HC_compress_optimal ( LZ4HC_CCtx_internal* ctx,
 {
     int retval = 0;
 #define TRAILING_LITERALS 3
-#ifdef LZ4HC_HEAPMODE
+#if defined(LZ4HC_HEAPMODE) && LZ4HC_HEAPMODE==1
     LZ4HC_optimal_t* const opt = (LZ4HC_optimal_t*)ALLOC(sizeof(LZ4HC_optimal_t) * (LZ4_OPT_NUM + TRAILING_LITERALS));
 #else
     LZ4HC_optimal_t opt[LZ4_OPT_NUM + TRAILING_LITERALS];   /* ~64 KB, which is a bit large for stack... */
@@ -1349,7 +1349,7 @@ static int LZ4HC_compress_optimal ( LZ4HC_CCtx_internal* ctx,
     const BYTE* ovref = NULL;
 
     /* init */
-#ifdef LZ4HC_HEAPMODE
+#if defined(LZ4HC_HEAPMODE) && LZ4HC_HEAPMODE==1
     if (opt == NULL) goto _return_label;
 #endif
     DEBUGLOG(5, "LZ4HC_compress_optimal(dst=%p, dstCapa=%u)", dst, (unsigned)dstCapacity);
@@ -1614,7 +1614,7 @@ if (limit == fillOutput) {
      goto _last_literals;
 }
 _return_label:
-#ifdef LZ4HC_HEAPMODE
+#if defined(LZ4HC_HEAPMODE) && LZ4HC_HEAPMODE==1
      FREEMEM(opt);
 #endif
      return retval;
